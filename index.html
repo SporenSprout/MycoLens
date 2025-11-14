@@ -1,39 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
+  <title>MycoLens: Identify Mushrooms Instantly</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/SporenSprout/MycoLens/877ef80ee19000edfeacfebdc5ed37fb68866e48/7B26F205-A653-4ADD-A27A-DBF397810922%202.PNG" />
+  <!-- Sharing Metadata (NO AI MENTION ANYWHERE) -->
+  <meta property="og:title" content="MycoLens: Identify Mushrooms Instantly" />
+  <meta property="og:description" content="Upload a mushroom photo and receive instant identification with scientific names, confidence rating, and a critical safety warning." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/SporenSprout/MycoLens/877ef80ee19000edfeacfebdc5ed37fb68866e48/7B26F205-A653-4ADD-A27A-DBF397810922%202.PNG" />
+  <meta property="og:url" content="https://sporensprout.github.io/MycoLens/" />
+  <meta property="og:type" content="website" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MycoLens: Identify Mushrooms Instantly</title>
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MycoLens: Identify Mushrooms Instantly" />
+  <meta name="twitter:description" content="Instant mushroom identification with scientific names and detailed descriptions." />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/SporenSprout/MycoLens/877ef80ee19000edfeacfebdc5ed37fb68866e48/7B26F205-A653-4ADD-A27A-DBF397810922%202.PNG" />
 
-    <!-- Tailwind CDN is fine -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/SporenSprout/MycoLens/877ef80ee19000edfeacfebdc5ed37fb68866e48/7B26F205-A653-4ADD-A27A-DBF397810922%202.PNG" />
 
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              'dark-bg': '#0D0221',
-              'neon-pink': '#F500BD',
-              'neon-cyan': '#00FFFF',
-              'neon-green': '#39FF14',
-              'light-text': '#F0F0F0',
-              'neon-yellow': '#fde047',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'dark-bg': '#0D0221',
+            'neon-pink': '#F500BD',
+            'neon-cyan': '#00FFFF',
+            'neon-green': '#39FF14',
+            'light-text': '#F0F0F0',
+            'neon-yellow': '#fde047',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
           }
         }
       }
-    </script>
+    };
+  </script>
 
-    <link rel="preconnect" href="https://rsms.me/">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-  </head>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
 
   <body class="bg-dark-bg">
     <div id="root"></div>
