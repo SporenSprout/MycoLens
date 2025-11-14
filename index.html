@@ -22,24 +22,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              'dark-bg': '#0D0221',
-              'neon-pink': '#F500BD',
-              'neon-cyan': '#00FFFF',
-              'neon-green': '#39FF14',
-              'light-text': '#F0F0F0',
-              'neon-yellow': '#fde047',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            }
-          }
-        }
-      };
-    </script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'dark-bg': '#0D0221',
+          'neon-pink': '#F500BD',
+          'neon-cyan': '#00FFFF',
+          'neon-green': '#39FF14',
+          'light-text': '#F0F0F0',
+          'neon-yellow': '#fde047',
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+        },
+        boxShadow: {
+          'neon-pink': '0 0 5px #F500BD, 0 0 10px #F500BD',
+          'neon-cyan': '0 0 5px #00FFFF, 0 0 10px #00FFFF',
+        },
+        keyframes: {
+          'scan-light': {
+            '0%': { top: '0%', opacity: 0 },
+            '10%': { top: '0%', opacity: 1 },
+            '90%': { top: '100%', opacity: 1 },
+            '100%': { top: '100%', opacity: 0 },
+          },
+        },
+        animation: {
+          'scan-light': 'scan-light 2.5s ease-in-out infinite',
+        },
+      },
+    },
+  };
+</script>
+
 
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
