@@ -1,5 +1,5 @@
 {
-  "name": "MycoLens: AI Mushroom Identifier",
-  "description": "A free mushroom identification app that uses AI to analyze user-uploaded photos. It provides a potential identification, confidence score, and a critical safety disclaimer, all while operating within free API limits to remain cost-free for everyone.",
+  "name": "MycoLens: Identify Mushrooms Instantly",
+  "description": "A free mushroom identification tool that analyzes user-uploaded photos and provides potential matches, scientific names, confidence scores, and a critical safety disclaimer.",
   "requestFramePermissions": []
 }
