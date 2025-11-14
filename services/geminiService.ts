@@ -32,10 +32,15 @@ export async function identifyMushroom(imageFile: File): Promise<IdentificationR
 
   if (!response.ok) {
     const errorText = await response.text();
-    // Use the error from the worker if available, otherwise provide a generic message.
     const errorMessage = errorText || "Identification request failed with status: " + response.status;
     throw new Error(errorMessage);
   }
+
+  // 🔥 MUST RETURN RESULT
+  const result: IdentificationResult = await response.json();
+  return result;
+}
+
 
   return await response.json();
 }
