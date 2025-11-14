@@ -12,12 +12,14 @@ const MAX_REQUESTS = 5; // Simulate a free daily limit
 
 export default function App() {
   const [image, setImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [result, setResult] = useState<IdentificationResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [requestCount, setRequestCount] = useState<number>(0);
 
   const handleImageUpload = (file: File) => {
+    setImageFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
       setImage(reader.result as string);
@@ -31,7 +33,7 @@ export default function App() {
   };
 
   const handleIdentify = useCallback(async () => {
-    if (!image) {
+    if (!imageFile) {
       setError('Please upload an image first.');
       return;
     }
@@ -46,21 +48,21 @@ export default function App() {
     setResult(null);
 
     try {
-      // Extract base64 data from data URL
-      const base64Data = image.split(',')[1];
-      const identifiedResult = await identifyMushroom(base64Data);
+      const identifiedResult = await identifyMushroom(imageFile);
       setResult(identifiedResult);
       setRequestCount(prev => prev + 1);
     } catch (err) {
       console.error(err);
-      setError('Could not identify the mushroom. The AI model may be unavailable or the image may be unclear. Please try another photo.');
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
+      setError(`Could not identify the mushroom. ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
-  }, [image, requestCount]);
+  }, [imageFile, requestCount]);
 
   const handleReset = () => {
     setImage(null);
+    setImageFile(null);
     setResult(null);
     setError(null);
     setIsLoading(false);
