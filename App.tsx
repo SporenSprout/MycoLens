@@ -5,17 +5,17 @@ import { ResultDisplay } from './components/ResultDisplay';
 import { Loader } from './components/Loader';
 import { Disclaimer } from './components/Disclaimer';
 import { RateLimitMessage } from './components/RateLimitMessage';
-import { identifyMushroom } from './services/geminiService';
+import { identifyMushroom, MycoLensError } from './services/geminiService';
 import type { IdentificationResult } from './types';
 
-const MAX_REQUESTS = 5; // Simulate a free daily limit
+const MAX_REQUESTS = 5;
 
 export default function App() {
   const [image, setImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [result, setResult] = useState<IdentificationResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<MycoLensError | null>(null);
   const [requestCount, setRequestCount] = useState<number>(0);
 
   const handleImageUpload = (file: File) => {
@@ -23,23 +23,38 @@ export default function App() {
     const reader = new FileReader();
     reader.onloadend = () => {
       setImage(reader.result as string);
-      setResult(null); // Reset result when a new image is uploaded
+      setResult(null);
       setError(null);
     };
     reader.onerror = () => {
-        setError("Failed to read the image file. Please try again.");
+      setError(
+        new MycoLensError(
+          "BAD_INPUT",
+          "Failed to read the image file. Please try again."
+        )
+      );
     };
     reader.readAsDataURL(file);
   };
 
   const handleIdentify = useCallback(async () => {
     if (!imageFile) {
-      setError('Please upload an image first.');
+      setError(
+        new MycoLensError(
+          "BAD_INPUT",
+          "Please upload a photo before trying to identify."
+        )
+      );
       return;
     }
-    
+
     if (requestCount >= MAX_REQUESTS) {
-      setError("You have reached your free identification limit for today. Please try again tomorrow.");
+      setError(
+        new MycoLensError(
+          "RATE_LIMITED",
+          "You have reached your free identification limit for today."
+        )
+      );
       return;
     }
 
@@ -51,10 +66,17 @@ export default function App() {
       const identifiedResult = await identifyMushroom(imageFile);
       setResult(identifiedResult);
       setRequestCount(prev => prev + 1);
-    } catch (err) {
-      console.error(err);
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
-      setError(`Could not identify the mushroom. ${errorMessage}`);
+    } catch (err: any) {
+      if (err instanceof MycoLensError) {
+        setError(err);
+      } else {
+        setError(
+          new MycoLensError(
+            "UNKNOWN",
+            "Something went wrong. Please try again shortly."
+          )
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -84,9 +106,9 @@ export default function App() {
               <div className="relative w-full max-w-sm rounded-xl overflow-hidden shadow-md border-2 border-neon-cyan/50 shadow-neon-cyan">
                 <img src={image} alt="Mushroom upload" className="object-cover w-full h-auto" />
                 {isLoading && (
-                    <div className="absolute top-0 left-0 w-full h-full bg-black/50 overflow-hidden">
-                        <div className="absolute left-0 w-full h-1 bg-neon-cyan/70 shadow-[0_0_10px_theme(colors.neon-cyan)] animate-scan-light"></div>
-                    </div>
+                  <div className="absolute top-0 left-0 w-full h-full bg-black/50 overflow-hidden">
+                    <div className="absolute left-0 w-full h-1 bg-neon-cyan/70 shadow-[0_0_10px_theme(colors.neon-cyan)] animate-scan-light"></div>
+                  </div>
                 )}
               </div>
             </div>
@@ -104,42 +126,48 @@ export default function App() {
             )}
 
             {image && (
-                <button
+              <button
                 onClick={handleReset}
                 className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 bg-transparent text-neon-cyan font-semibold py-3 px-6 rounded-full border-2 border-neon-cyan hover:bg-neon-cyan/20 transition-colors"
-                >
+              >
                 Upload New Photo
-                </button>
+              </button>
             )}
           </div>
-          
+
           {isLoading && <Loader />}
-          
+
           {error && !isLoading && (
-            <div className="mt-6 p-4 bg-red-900/50 border border-red-500 text-red-300 rounded-lg text-center shadow-neon-red">
-              <p className="font-semibold">Error</p>
-              <p>{error}</p>
+            <div className="mt-6 p-4 bg-red-900/40 backdrop-blur border border-red-500/60 text-red-200 rounded-lg text-center shadow-lg shadow-red-900/40">
+              <p className="font-semibold text-red-300">There was a problem with that photo.</p>
+              <p className="mt-1 text-sm">{error.message}</p>
+              <button
+                onClick={() => setError(null)}
+                className="mt-3 text-xs font-semibold px-4 py-1 border border-red-400 rounded-full hover:bg-red-400/20 transition"
+              >
+                Close
+              </button>
             </div>
           )}
 
           {isRateLimited && <RateLimitMessage />}
 
           {result && !isLoading && <ResultDisplay result={result} />}
-
         </main>
-         <footer className="text-center mt-8 text-sm text-gray-400 flex flex-col items-center gap-4">
-            <div>
-              <p>MycoLens identifications are for educational purposes only.</p>
-              <p>Free uses remaining today: {Math.max(0, MAX_REQUESTS - requestCount)}</p>
-            </div>
-            <a
-              href="https://www.paypal.com/ncp/payment/64QAX8H8N3M7E"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-transparent text-neon-yellow font-bold py-2 px-6 rounded-full border-2 border-neon-yellow hover:bg-neon-yellow/20 transition-all duration-300 ease-in-out shadow-neon-yellow transform hover:scale-105"
-            >
-              Donate ❤️
-            </a>
+
+        <footer className="text-center mt-8 text-sm text-gray-400 flex flex-col items-center gap-4">
+          <div>
+            <p>MycoLens identifications are for educational purposes only.</p>
+            <p>Free uses remaining today: {Math.max(0, MAX_REQUESTS - requestCount)}</p>
+          </div>
+          <a
+            href="https://www.paypal.com/ncp/payment/64QAX8H8N3M7E"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-transparent text-neon-yellow font-bold py-2 px-6 rounded-full border-2 border-neon-yellow hover:bg-neon-yellow/20 transition-all duration-300 ease-in-out shadow-neon-yellow transform hover:scale-105"
+          >
+            Donate ❤️
+          </a>
         </footer>
       </div>
     </div>
